@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01Oneiro — The private AI dream interpreter</title>
+  <meta name="description" content="A private AI dream interpreter that runs entirely on your iPhone. Your dreams stay on your device. No servers, no accounts, no data collected.">
+  <meta property="og:title" content="01Oneiro — The private AI dream interpreter">
+  <meta property="og:description" content="On-device AI dream journal. Private by design. No internet required after setup.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#060606">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #1a1928;
+      --surface: #26233a;
+      --border:  #3b3248;
+      --dim:     #444444;
+      --sub:     #666666;
+      --text:    #aaaaaa;
+      --bright:  #ffffff;
+      --green:   #b388ff; /* Replaced with Violet for Oneiro */
+      --glow:    rgba(179,136,255,0.12);
+      --mono:    'JetBrains Mono', 'Fira Code', monospace;
+      --display: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--mono); font-size: 14px; line-height: 1.7;
+      -webkit-font-smoothing: antialiased; min-height: 100vh;
+    }
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(179,136,255,0.07) 1px, transparent 1px);
+      background-size: 32px 32px; pointer-events: none; z-index: 0;
+    }
+    .scan-lines {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.018) 2px, rgba(0,0,0,0.018) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    /* Header */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(26,25,40,0.94); backdrop-filter: blur(14px);
+    }
+    .site-header .wrap {
+      display: flex; justify-content: space-between; align-items: center; height: 54px;
+    }
+    .site-header-logo {
+      font-family: var(--mono); font-weight: 700; font-size: 13px;
+      letter-spacing: 2px; color: var(--bright); text-decoration: none;
+    }
+    .site-header-logo span { color: var(--green); font-weight: 400; }
+    .site-header-nav { display: flex; gap: 20px; align-items: center; }
+    .site-header-nav a {
+      color: var(--dim); font-size: 11.5px; text-decoration: none;
+      transition: color 0.2s; letter-spacing: 0.05em;
+    }
+    .site-header-nav a:hover { color: var(--green); text-decoration: none; }
+    .site-header-nav a.nav-cta {
+      border: 1px solid rgba(179,136,255,0.3); color: var(--green);
+      padding: 5px 12px; border-radius: 4px; font-size: 11px; letter-spacing: 0.1em;
+      transition: background 0.2s;
+    }
+    .site-header-nav a.nav-cta:hover { background: var(--glow); text-decoration: none; }
+    @media (max-width: 620px) {
+      .site-header-nav a:not(.nav-keep) { display: none; }
+    }
+
+    /* Hero */
+    .hero { position: relative; z-index: 1; padding: 96px 0 80px; }
+    .hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(179,136,255,0.07), transparent 40%),
+        radial-gradient(circle at 80% 10%, rgba(118,0,255,0.04), transparent 32%);
+    }
+    .hero-inner { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(179,136,255,0.18); border-radius: 999px;
+      padding: 5px 12px; margin-bottom: 28px;
+      color: var(--green); font-size: 10.5px; letter-spacing: 0.16em;
+      text-transform: uppercase; background: rgba(179,136,255,0.035);
+    }
+    .pulse-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(179,136,255,0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(179,136,255,0); }
+    }
+    .hero-heading {
+      font-family: var(--display); font-weight: 300;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1.02; letter-spacing: -0.04em;
+      color: var(--bright); margin-bottom: 24px; max-width: 740px;
+    }
+    .hero-heading .accent { color: var(--green); }
+    .hero-tagline {
+      max-width: 560px; font-size: 14px; line-height: 1.9;
+      color: var(--sub); margin-bottom: 36px;
+    }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
+    .link-btn {
+      display: inline-block; border: 1px solid var(--border);
+      color: var(--text); padding: 10px 20px; border-radius: 4px;
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+      text-decoration: none; transition: border-color 0.2s, color 0.2s;
+    }
+    .link-btn:hover { border-color: var(--dim); color: var(--bright); text-decoration: none; }
+    .link-btn-primary {
+      background: var(--green); color: #000; border-color: var(--green); font-weight: 700;
+    }
+    .link-btn-primary:hover { background: #d7b3ff; border-color: #d7b3ff; color: #000; text-decoration: none; }
+
+    /* Privacy strip */
+    .privacy-strip {
+      display: flex; gap: 32px; flex-wrap: wrap;
+      padding: 28px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      margin-bottom: 72px;
+    }
+    .privacy-item { display: flex; align-items: center; gap: 10px; }
+    .privacy-item-icon { color: var(--green); font-size: 13px; }
+    .privacy-item-text { font-size: 12px; color: var(--sub); }
+    .privacy-item-text strong { color: var(--text); font-weight: 400; }
+
+    /* Sections */
+    .section { padding: 72px 0; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+    .section-kicker {
+      font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 14px;
+    }
+    .section-heading {
+      font-family: var(--display); font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.03em; color: var(--bright); margin-bottom: 18px; line-height: 1.1;
+    }
+    .section-sub {
+      max-width: 580px; font-size: 14px; color: var(--sub); line-height: 1.85; margin-bottom: 40px;
+    }
+
+    /* Feature grid */
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
+    }
+    .feature-card {
+      padding: 24px; border: 1px solid var(--border); border-radius: 8px;
+      background: rgba(13,13,13,0.7); transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(179,136,255,0.2); box-shadow: 0 8px 32px rgba(179,136,255,0.05);
+    }
+    .feature-card-icon { color: var(--green); font-size: 16px; margin-bottom: 12px; }
+    .feature-card-title { color: var(--bright); font-size: 12px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.04em; }
+    .feature-card-body { font-size: 12px; color: var(--sub); line-height: 1.7; }
+
+    /* Pro box */
+    .pro-box {
+      border: 1px solid rgba(179,136,255,0.15); border-radius: 8px;
+      padding: 36px; background: linear-gradient(135deg, rgba(179,136,255,0.04), transparent 60%);
+      margin-bottom: 32px;
+    }
+    .pro-badge {
+      display: inline-block; background: var(--green); color: #000;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; padding: 3px 8px; border-radius: 3px; margin-bottom: 16px;
+    }
+    .pro-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .pro-list li { font-size: 13px; color: var(--text); padding-left: 18px; position: relative; }
+    .pro-list li::before { content: '->'; position: absolute; left: 0; color: var(--green); font-size: 11px; }
+
+    /* Footer */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border); padding: 32px 0;
+    }
+    footer .wrap {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { color: var(--dim); font-size: 11px; text-decoration: none; letter-spacing: 0.05em; }
+    .footer-links a:hover { color: var(--green); text-decoration: none; }
+    .footer-copy { color: var(--sub); font-size: 11px; opacity: 0.5; }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="scan-lines"></div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-header-logo" href="index.html">01<span>oneiro</span></a>
+    <nav class="site-header-nav">
+      <a href="support.html" class="nav-keep">Support</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="https://0x01.world" target="_blank" rel="noopener" class="nav-keep nav-cta">0x01.world ↗</a>
+      <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" title="Infinity Team" style="display:inline-flex; align-items:center; gap:6px; opacity:0.55; transition:opacity 0.2s; text-decoration:none;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.55'"><img src="infinity-logo.png" alt="Infinity Team" style="height:18px; width:18px; border-radius:4px; object-fit:cover; filter:brightness(0) invert(1);" /></a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" style="position:relative; overflow:hidden;">
+  <canvas id="oneiro-canvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
+  <div class="wrap hero-inner" style="position:relative; z-index:1;">
+
+    <div class="hero-badge">
+      <span class="pulse-dot"></span>
+      <span>On-device AI · iPhone 15 Pro +</span>
+    </div>
+
+    <h1 class="hero-heading">
+      The private AI<br><span class="accent">dream interpreter</span>
+    </h1>
+
+    <p class="hero-tagline">
+      A personal dream journal and analyst that runs entirely on your iPhone.
+      Your most intimate nocturnal thoughts never leave your device. No servers, no data collection.
+    </p>
+
+    <div class="hero-ctas">
+      <a class="link-btn link-btn-primary" href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener">Download on App Store</a>
+      <a class="link-btn" href="support.html">FAQ</a>
+    </div>
+
+    <div style="margin-top:28px; display:flex; align-items:center; gap:10px;">
+      <span style="font-size:10.5px; color:var(--dim); letter-spacing:0.08em;">A product of</span>
+      <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:7px; text-decoration:none; opacity:0.6; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+        <img src="infinity-logo.png" alt="Infinity Team" style="height:20px; width:20px; border-radius:4px; object-fit:cover; filter:brightness(0) invert(1);" />
+        <span style="font-size:10.5px; color:var(--text); letter-spacing:0.08em;">Infinity Team</span>
+      </a>
+    </div>
+
+    <div class="privacy-strip">
+      <div class="privacy-item">
+        <span class="privacy-item-icon">//</span>
+        <span class="privacy-item-text"><strong>Zero data collected</strong> — completely private</span>
+      </div>
+      <div class="privacy-item">
+        <span class="privacy-item-icon">//</span>
+        <span class="privacy-item-text"><strong>Works offline</strong> after initial model download</span>
+      </div>
+      <div class="privacy-item">
+        <span class="privacy-item-icon">//</span>
+        <span class="privacy-item-text"><strong>No account required</strong></span>
+      </div>
+      <div class="privacy-item">
+        <span class="privacy-item-icon">//</span>
+        <span class="privacy-item-text"><strong>Delete everything</strong> by deleting the app</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="section-kicker">// how it works</p>
+    <h2 class="section-heading">Private by construction,<br>not by policy</h2>
+    <p class="section-sub">
+      01Oneiro runs powerful AI language models directly on your iPhone using Apple Silicon.
+      Every analysis of your dreams happens on your chip — no network call, no cloud API, no third party in the loop.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-card-icon">◈</div>
+        <div class="feature-card-title">ON-DEVICE INFERENCE</div>
+        <div class="feature-card-body">The models run via Apple's MLX framework on the A17 Pro chip or newer. The model never touches the internet after download.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">◈</div>
+        <div class="feature-card-title">DREAM MEMORY</div>
+        <div class="feature-card-body">01Oneiro builds a private catalog of your dreams over time, finding patterns and recurring symbols. Stored locally.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">◈</div>
+        <div class="feature-card-title">NO ACCOUNT, NO LOGIN</div>
+        <div class="feature-card-body">Nothing to sign up for. No email, no password, no profile synced anywhere. Open the app and start writing.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">◈</div>
+        <div class="feature-card-title">HONEST INTERPRETATIONS</div>
+        <div class="feature-card-body">The agent provides analytical, Jungian, or Freudian interpretations without cloud-based content censorship.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">◈</div>
+        <div class="feature-card-title">COMPLETE CONTROL</div>
+        <div class="feature-card-body">Clear your dream journal or delete the app — all instant, all permanent.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">◈</div>
+        <div class="feature-card-title">OFFLINE BY DEFAULT</div>
+        <div class="feature-card-body">After the one-time model download (~1–2 GB), 01Oneiro works with no internet connection at all.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="section-kicker">// pro</p>
+    <h2 class="section-heading">Go further</h2>
+    <p class="section-sub">Pro unlocks additional capabilities. Everything core remains free.</p>
+
+    <div class="pro-box">
+      <span class="pro-badge">PRO</span>
+      <p style="font-size: 13px; color: var(--sub); line-height: 1.7; max-width: 520px;">
+        A Pro subscription gives you access to features that go beyond basic interpretation.
+        Billed through Apple. Cancel anytime.
+      </p>
+      <ul class="pro-list">
+        <li>Cross-Dream Pattern Recognition — finding themes across months of sleep</li>
+        <li>Extended memory — deeper, longer-term context about your subconscious</li>
+        <li>Priority model updates — new model versions as they release</li>
+      </ul>
+    </div>
+
+    <a class="link-btn link-btn-primary" href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener">Get 01Oneiro</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="support.html">Support</a>
+      <a href="mailto:contact@0x01.world">contact@0x01.world</a>
+    </div>
+    <div class="footer-copy">© 2026 <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" style="color:inherit; text-decoration:none;">Infinity Team</a>. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+;(function () {
+  const canvas = document.getElementById('oneiro-canvas')
+  const hero   = canvas.parentElement
+  const ctx    = canvas.getContext('2d')
+  const particles = []
+
+  function resize() {
+    canvas.width  = hero.offsetWidth
+    canvas.height = hero.offsetHeight
+  }
+  resize()
+  window.addEventListener('resize', resize)
+
+  function spawn() {
+    const cx = canvas.width * (0.3 + Math.random() * 0.4)
+    particles.push({
+      x:    cx,
+      y:    canvas.height * (0.6 + Math.random() * 0.3),
+      vx:   (Math.random() - 0.5) * 0.4,
+      vy:   -(0.4 + Math.random() * 0.6),
+      r:    1 + Math.random() * 2.5,
+      life: 0,
+      maxLife: 180 + Math.random() * 140,
+      hue: Math.random() < 0.7 ? 'purple' : 'white',
+    })
+  }
+
+  let frame = 0
+  function tick() {
+    requestAnimationFrame(tick)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    frame++
+    if (frame % 5 === 0 && particles.length < 60) spawn()
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i]
+      p.life++
+      p.x += p.vx
+      p.y += p.vy
+      p.vx += (Math.random() - 0.5) * 0.04
+
+      const t    = p.life / p.maxLife
+      const alpha = t < 0.2
+        ? (t / 0.2) * 0.55
+        : t > 0.6
+          ? ((1 - t) / 0.4) * 0.55
+          : 0.55
+
+      if (p.life >= p.maxLife) { particles.splice(i, 1); continue }
+
+      ctx.beginPath()
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+      if (p.hue === 'purple') {
+        ctx.fillStyle = `rgba(179, 136, 255, ${alpha * 0.7})`
+      } else {
+        ctx.fillStyle = `rgba(200, 220, 255, ${alpha * 0.35})`
+      }
+      ctx.fill()
+
+      if (p.r > 2) {
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2)
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3)
+        if (p.hue === 'purple') {
+          grad.addColorStop(0, `rgba(179, 136, 255, ${alpha * 0.08})`)
+        } else {
+          grad.addColorStop(0, `rgba(200, 220, 255, ${alpha * 0.04})`)
+        }
+        grad.addColorStop(1, 'rgba(0,0,0,0)')
+        ctx.fillStyle = grad
+        ctx.fill()
+      }
+    }
+  }
+
+  for (let i = 0; i < 12; i++) {
+    spawn()
+    const p = particles[particles.length - 1]
+    p.life = Math.floor(Math.random() * p.maxLife * 0.5)
+    p.y -= p.vy * p.life
+    p.x += p.vx * p.life
+  }
+
+  tick()
+})()
+</script>
+</body>
+</html>
