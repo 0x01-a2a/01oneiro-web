@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — 01Oneiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #1a1928;
+      --surface: #26233a;
+      --border:  #3b3248;
+      --dim:     #444444;
+      --sub:     #666666;
+      --text:    #aaaaaa;
+      --bright:  #ffffff;
+      --green:   #b388ff;
+      --glow:    rgba(179,136,255,0.12);
+      --mono:    'JetBrains Mono', 'Fira Code', monospace;
+      --display: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--mono); font-size: 14px; line-height: 1.7;
+      -webkit-font-smoothing: antialiased; min-height: 100vh;
+    }
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(179,136,255,0.07) 1px, transparent 1px);
+      background-size: 32px 32px; pointer-events: none; z-index: 0;
+    }
+    .scan-lines {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.018) 2px, rgba(0,0,0,0.018) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(26,25,40,0.94); backdrop-filter: blur(14px);
+    }
+    .site-header .wrap {
+      display: flex; justify-content: space-between; align-items: center; height: 54px;
+    }
+    .site-header-logo {
+      font-family: var(--mono); font-weight: 700; font-size: 13px;
+      letter-spacing: 2px; color: var(--bright); text-decoration: none;
+    }
+    .site-header-logo span { color: var(--green); font-weight: 400; }
+    .site-header-nav { display: flex; gap: 20px; align-items: center; }
+    .site-header-nav a {
+      color: var(--dim); font-size: 11.5px; text-decoration: none;
+      transition: color 0.2s; letter-spacing: 0.05em;
+    }
+    .site-header-nav a:hover { color: var(--green); text-decoration: none; }
+    .site-header-nav a.nav-cta {
+      border: 1px solid rgba(179,136,255,0.3); color: var(--green);
+      padding: 5px 12px; border-radius: 4px; font-size: 11px; letter-spacing: 0.1em;
+      transition: background 0.2s;
+    }
+    .site-header-nav a.nav-cta:hover { background: var(--glow); text-decoration: none; }
+    @media (max-width: 620px) {
+      .site-header-nav a:not(.nav-keep) { display: none; }
+    }
+
+    .content {
+      position: relative; z-index: 1;
+      max-width: 720px; margin: 0 auto; padding: 72px 32px 100px;
+    }
+    .eyebrow {
+      font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 14px;
+    }
+    h1 {
+      font-family: var(--display); font-weight: 300;
+      font-size: clamp(2.2rem, 4vw, 3.4rem); letter-spacing: -0.04em;
+      color: var(--bright); margin-bottom: 8px; line-height: 1.05;
+    }
+    .updated { font-size: 12px; color: var(--dim); margin-bottom: 48px; letter-spacing: 0.04em; }
+
+    .summary-box {
+      border: 1px solid rgba(179,136,255,0.18); border-radius: 8px;
+      padding: 24px; margin-bottom: 48px;
+      background: rgba(179,136,255,0.03);
+    }
+    .summary-box p { font-size: 14px; color: var(--text); line-height: 1.75; }
+    .summary-box strong { color: var(--green); font-weight: 400; }
+
+    h2 {
+      font-size: 12px; font-weight: 700; margin-top: 44px; margin-bottom: 14px;
+      color: var(--bright); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    p { font-size: 13px; color: var(--sub); margin-bottom: 16px; line-height: 1.85; }
+    ul { padding-left: 0; margin-bottom: 16px; list-style: none; }
+    ul li {
+      font-size: 13px; color: var(--sub); margin-bottom: 8px;
+      padding-left: 18px; position: relative; line-height: 1.7;
+    }
+    ul li::before { content: '//'; position: absolute; left: 0; color: var(--dim); font-size: 10px; top: 2px; }
+    strong { color: var(--text); font-weight: 400; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border); padding: 32px 0;
+    }
+    footer .wrap {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { color: var(--dim); font-size: 11px; text-decoration: none; letter-spacing: 0.05em; }
+    .footer-links a:hover { color: var(--green); text-decoration: none; }
+    .footer-copy { color: var(--sub); font-size: 11px; opacity: 0.5; }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="scan-lines"></div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-header-logo" href="index.html">01<span>oneiro</span></a>
+    <nav class="site-header-nav">
+      <a href="index.html" class="nav-keep">← Back</a>
+      <a href="https://0x01.world" target="_blank" rel="noopener" class="nav-keep nav-cta">0x01.world ↗</a>
+    </nav>
+  </div>
+</header>
+
+<div class="content">
+  <p class="eyebrow">// legal</p>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: April 2026</p>
+
+  <div class="summary-box">
+    <p><strong>The short version:</strong> 01Oneiro does not collect, transmit, or store any personal data on external servers. Everything — your dream journals, interpretations, memory, and settings — stays directly on your device. We have no servers receiving your data because we built the app so that it does not send any.</p>
+  </div>
+
+  <h2>Who we are</h2>
+  <p>01Oneiro is developed by Infinity Team ("we", "us", "our"). You can contact us at <a href="mailto:contact@0x01.world">contact@0x01.world</a>.</p>
+
+  <h2>What data we collect</h2>
+  <p><strong>We collect nothing.</strong> 01Oneiro does not collect, transmit, or share any personal information, usage data, analytics, crash reports, or any other data with us or any third party.</p>
+  <p>Specifically, we do not collect:</p>
+  <ul>
+    <li>Your name, email address, or any account information (no account is required)</li>
+    <li>The contents of your dream journals or interpretations</li>
+    <li>Your device identifiers, IP address, or location</li>
+    <li>Usage statistics, session lengths, or feature interaction data</li>
+    <li>Crash reports or diagnostic data sent to our servers</li>
+    <li>Any information about you whatsoever</li>
+  </ul>
+
+  <h2>How the app works technically</h2>
+  <p>01Oneiro runs an AI language model directly on your iPhone using Apple Silicon. All inference — every dream interpretation — happens on your device. No text you type is sent to any server for processing.</p>
+  <p>The AI memory system, which allows 01Oneiro to remember recurring symbols, themes, and emotional patterns across your dreams, stores all data locally in your device's app storage. This data never leaves your device.</p>
+
+  <h2>Model download</h2>
+  <p>When you first set up 01Oneiro, the app downloads the AI model files from a public model repository. This download is a one-time transfer of model weight files. No personal information is sent during this download. After the model is downloaded, the app operates entirely offline.</p>
+
+  <h2>Third-party services</h2>
+  <p>01Oneiro does not integrate any third-party analytics, advertising, or data collection SDKs. We do not use Firebase, Mixpanel, Segment, Facebook SDK, Google Analytics, or any equivalent service.</p>
+
+  <h2>Children's privacy</h2>
+  <p>01Oneiro is not directed at children under 13. We do not knowingly collect data from anyone, including children.</p>
+
+  <h2>Your data, your control</h2>
+  <p>Because all data is stored locally on your device, you have complete control over it at all times:</p>
+  <ul>
+    <li><strong>Delete dream journals</strong> — Settings → Clear all log history</li>
+    <li><strong>Delete AI memory</strong> — Settings → Reset memory</li>
+    <li><strong>Delete everything</strong> — Delete the app from your iPhone. All data is removed instantly.</li>
+  </ul>
+
+  <h2>Changes to this policy</h2>
+  <p>If we make changes to this policy, we will update the date at the top of this page. Because we collect no data, any changes would only reflect clarifications or changes in how the app itself works technically.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this privacy policy: <a href="mailto:contact@0x01.world">contact@0x01.world</a></p>
+
+  <hr>
+  <p style="font-size: 12px; opacity: 0.4;">This policy was written to be read by humans, not lawyers. If something is unclear, just ask.</p>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="support.html">Support</a>
+    </div>
+    <div class="footer-copy">© 2026 Infinity Team. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>

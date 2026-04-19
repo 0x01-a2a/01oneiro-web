@@ -88,10 +88,11 @@
     .hero-inner { position: relative; z-index: 1; }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      border: 1px solid rgba(179,136,255,0.18); border-radius: 999px;
+      border: 1px solid rgba(179,136,255,0.4); border-radius: 999px;
       padding: 5px 12px; margin-bottom: 28px;
-      color: var(--green); font-size: 10.5px; letter-spacing: 0.16em;
-      text-transform: uppercase; background: rgba(179,136,255,0.035);
+      color: #ffffff; font-size: 10.5px; letter-spacing: 0.16em;
+      text-transform: uppercase; background: rgba(26,25,40,0.7);
+      backdrop-filter: blur(8px);
     }
     .pulse-dot {
       width: 6px; height: 6px; border-radius: 50%; background: var(--green);
@@ -105,12 +106,15 @@
       font-family: var(--display); font-weight: 300;
       font-size: clamp(2.8rem, 6vw, 5rem);
       line-height: 1.02; letter-spacing: -0.04em;
-      color: var(--bright); margin-bottom: 24px; max-width: 740px;
+      color: #ffffff; margin-bottom: 24px; max-width: 740px;
+      text-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.8);
     }
-    .hero-heading .accent { color: var(--green); }
+    .hero-heading .accent { color: var(--green); text-shadow: 0 0 20px rgba(179,136,255,0.4); }
     .hero-tagline {
-      max-width: 560px; font-size: 14px; line-height: 1.9;
-      color: var(--sub); margin-bottom: 36px;
+      max-width: 560px; font-size: 15.5px; line-height: 1.9;
+      color: rgba(255,255,255,0.9); margin-bottom: 36px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.9);
+      font-weight: 400;
     }
     .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
     .link-btn {
@@ -213,8 +217,10 @@
   </div>
 </header>
 
-<section class="hero" style="position:relative; overflow:hidden;">
-  <canvas id="oneiro-canvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
+<section class="hero" style="position:relative; overflow:hidden; background: url('app-icon.png') no-repeat center center; background-size: cover;">
+  <!-- Dark vignette overlay so text is readable -->
+  <div style="position:absolute; inset:0; background: radial-gradient(circle at center, rgba(26,25,40,0.3) 0%, var(--bg) 100%); z-index:0;"></div>
+  <canvas id="oneiro-canvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity: 0.5;"></canvas>
   <div class="wrap hero-inner" style="position:relative; z-index:1;">
 
     <div class="hero-badge">
@@ -236,11 +242,11 @@
       <a class="link-btn" href="support.html">FAQ</a>
     </div>
 
-    <div style="margin-top:28px; display:flex; align-items:center; gap:10px;">
-      <span style="font-size:10.5px; color:var(--dim); letter-spacing:0.08em;">A product of</span>
-      <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:7px; text-decoration:none; opacity:0.6; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
-        <img src="infinity-logo.png" alt="Infinity Team" style="height:20px; width:20px; border-radius:4px; object-fit:cover; filter:brightness(0) invert(1);" />
-        <span style="font-size:10.5px; color:var(--text); letter-spacing:0.08em;">Infinity Team</span>
+    <div style="margin-top:28px; display:flex; align-items:center; gap:10px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+      <span style="font-size:10.5px; color:rgba(255,255,255,0.8); letter-spacing:0.08em;">A product of</span>
+      <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:7px; text-decoration:none; opacity:0.85; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
+        <img src="infinity-logo.png" alt="Infinity Team" style="height:20px; width:20px; border-radius:4px; object-fit:cover; filter:brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.8));" />
+        <span style="font-size:10.5px; color:#ffffff; letter-spacing:0.08em; font-weight:600;">Infinity Team</span>
       </a>
     </div>
 
@@ -310,26 +316,13 @@
   </div>
 </section>
 
-<section class="section">
-  <div class="wrap">
-    <p class="section-kicker">// pro</p>
-    <h2 class="section-heading">Go further</h2>
-    <p class="section-sub">Pro unlocks additional capabilities. Everything core remains free.</p>
-
-    <div class="pro-box">
-      <span class="pro-badge">PRO</span>
-      <p style="font-size: 13px; color: var(--sub); line-height: 1.7; max-width: 520px;">
-        A Pro subscription gives you access to features that go beyond basic interpretation.
-        Billed through Apple. Cancel anytime.
-      </p>
-      <ul class="pro-list">
-        <li>Cross-Dream Pattern Recognition — finding themes across months of sleep</li>
-        <li>Extended memory — deeper, longer-term context about your subconscious</li>
-        <li>Priority model updates — new model versions as they release</li>
-      </ul>
-    </div>
-
-    <a class="link-btn link-btn-primary" href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener">Get 01Oneiro</a>
+<section class="section" style="border-bottom: 1px solid var(--border);">
+  <div class="wrap" style="text-align: center; padding-bottom: 40px;">
+    <h2 class="section-heading" style="margin-bottom: 24px;">No subscriptions.<br>No paywalls.</h2>
+    <p class="section-sub" style="margin: 0 auto 40px; max-width: 500px;">
+      01Oneiro is completely free. Every feature, from deep memory to custom interpretations, is included from day one.
+    </p>
+    <a class="link-btn link-btn-primary" href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener">Get 01Oneiro for free</a>
   </div>
 </section>
 
