@@ -8,423 +8,384 @@
   <meta property="og:title" content="01Oneiro — The private AI dream interpreter">
   <meta property="og:description" content="On-device AI dream journal. Private by design. No internet required after setup.">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#060606">
+  <meta name="theme-color" content="#0d0b1a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:      #1a1928;
-      --surface: #26233a;
-      --border:  #3b3248;
-      --dim:     #444444;
-      --sub:     #666666;
-      --text:    #aaaaaa;
-      --bright:  #ffffff;
-      --green:   #b388ff; /* Replaced with Violet for Oneiro */
-      --glow:    rgba(179,136,255,0.12);
-      --mono:    'JetBrains Mono', 'Fira Code', monospace;
-      --display: 'Inter', system-ui, -apple-system, sans-serif;
+      --bg:          #0d0b1a;
+      --bg-card:     #13111f;
+      --bg-alt:      #1a1728;
+      --accent:      #b388ff;
+      --accent-d:    #9c6fef;
+      --accent-soft: rgba(179,136,255,0.10);
+      --accent-border: rgba(179,136,255,0.20);
+      --text:        #f0ecff;
+      --soft:        #8b82a8;
+      --softer:      #5c5478;
+      --border:      rgba(255,255,255,0.07);
+      --shadow:      0 2px 16px rgba(0,0,0,0.4);
+      --shadow-lg:   0 8px 40px rgba(0,0,0,0.5);
+      --mono:        'JetBrains Mono', monospace;
+      --sans:        'Inter', sans-serif;
+      --serif:       'Instrument Serif', serif;
+      --r:           16px;
+      --r-lg:        24px;
     }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg); color: var(--text);
-      font-family: var(--mono); font-size: 14px; line-height: 1.7;
-      -webkit-font-smoothing: antialiased; min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
-    .grid-bg {
-      position: fixed; inset: 0;
-      background-image: radial-gradient(circle, rgba(179,136,255,0.07) 1px, transparent 1px);
-      background-size: 32px 32px; pointer-events: none; z-index: 0;
-    }
-    .scan-lines {
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.018) 2px, rgba(0,0,0,0.018) 4px);
-      pointer-events: none; z-index: 9999;
-    }
-    a { color: var(--green); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .wrap { max-width: 860px; margin: 0 auto; padding: 0 32px; }
 
-    /* Header */
-    .site-header {
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 40px; }
+
+    /* ── Nav ─────────────────────────────── */
+    nav {
       position: sticky; top: 0; z-index: 100;
+      background: rgba(13,11,26,0.85);
+      backdrop-filter: saturate(180%) blur(16px);
       border-bottom: 1px solid var(--border);
-      background: rgba(26,25,40,0.94); backdrop-filter: blur(14px);
     }
-    .site-header .wrap {
-      display: flex; justify-content: space-between; align-items: center; height: 54px;
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--text); text-decoration: none; letter-spacing: -0.03em; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 13px; font-weight: 500; color: var(--soft); text-decoration: none; transition: color .15s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #0d0b1a !important;
+      padding: 7px 16px; border-radius: 8px; font-weight: 700 !important;
+      transition: background .15s !important;
     }
-    .site-header-logo {
-      font-family: var(--mono); font-weight: 700; font-size: 13px;
-      letter-spacing: 2px; color: var(--bright); text-decoration: none;
-    }
-    .site-header-logo span { color: var(--green); font-weight: 400; }
-    .site-header-nav { display: flex; gap: 20px; align-items: center; }
-    .site-header-nav a {
-      color: var(--dim); font-size: 11.5px; text-decoration: none;
-      transition: color 0.2s; letter-spacing: 0.05em;
-    }
-    .site-header-nav a:hover { color: var(--green); text-decoration: none; }
-    .site-header-nav a.nav-cta {
-      border: 1px solid rgba(179,136,255,0.3); color: var(--green);
-      padding: 5px 12px; border-radius: 4px; font-size: 11px; letter-spacing: 0.1em;
-      transition: background 0.2s;
-    }
-    .site-header-nav a.nav-cta:hover { background: var(--glow); text-decoration: none; }
-    @media (max-width: 620px) {
-      .site-header-nav a:not(.nav-keep) { display: none; }
-    }
+    .nav-cta:hover { background: var(--accent-d) !important; }
 
-    /* Hero */
-    .hero { position: relative; z-index: 1; padding: 96px 0 80px; }
+    /* ── Hero ────────────────────────────── */
+    .hero { padding: 100px 0 80px; position: relative; overflow: hidden; }
     .hero::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(179,136,255,0.07), transparent 40%),
-        radial-gradient(circle at 80% 10%, rgba(118,0,255,0.04), transparent 32%);
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(179,136,255,0.07) 0%, transparent 65%);
+      pointer-events: none;
     }
-    .hero-inner { position: relative; z-index: 1; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 480px; gap: 64px; align-items: center; position: relative; z-index: 1; }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      border: 1px solid rgba(179,136,255,0.4); border-radius: 999px;
-      padding: 5px 12px; margin-bottom: 28px;
-      color: #ffffff; font-size: 10.5px; letter-spacing: 0.16em;
-      text-transform: uppercase; background: rgba(26,25,40,0.7);
-      backdrop-filter: blur(8px);
+      background: var(--accent-soft); border: 1px solid var(--accent-border);
+      border-radius: 99px; padding: 5px 14px;
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      color: var(--accent); margin-bottom: 24px;
     }
-    .pulse-dot {
-      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
-      animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(179,136,255,0.4); }
-      50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(179,136,255,0); }
-    }
-    .hero-heading {
-      font-family: var(--display); font-weight: 300;
-      font-size: clamp(2.8rem, 6vw, 5rem);
-      line-height: 1.02; letter-spacing: -0.04em;
-      color: #ffffff; margin-bottom: 24px; max-width: 740px;
-      text-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.8);
-    }
-    .hero-heading .accent { color: var(--green); text-shadow: 0 0 20px rgba(179,136,255,0.4); }
-    .hero-tagline {
-      max-width: 560px; font-size: 15.5px; line-height: 1.9;
-      color: rgba(255,255,255,0.9); margin-bottom: 36px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.9);
-      font-weight: 400;
-    }
-    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
-    .link-btn {
-      display: inline-block; border: 1px solid var(--border);
-      color: var(--text); padding: 10px 20px; border-radius: 4px;
-      font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
-      text-decoration: none; transition: border-color 0.2s, color 0.2s;
-    }
-    .link-btn:hover { border-color: var(--dim); color: var(--bright); text-decoration: none; }
-    .link-btn-primary {
-      background: var(--green); color: #000; border-color: var(--green); font-weight: 700;
-    }
-    .link-btn-primary:hover { background: #d7b3ff; border-color: #d7b3ff; color: #000; text-decoration: none; }
+    .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.4; transform:scale(.8); } }
+    h1 { font-size: clamp(2.4rem, 4.5vw, 3.6rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.08; margin-bottom: 20px; }
+    h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); }
+    .hero-sub { font-size: 17px; color: var(--soft); line-height: 1.65; max-width: 480px; margin-bottom: 36px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; padding: 13px 24px; border-radius: 12px; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #0d0b1a; box-shadow: 0 2px 16px rgba(179,136,255,0.30); }
+    .btn-primary:hover { box-shadow: 0 4px 24px rgba(179,136,255,0.42); }
+    .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
 
-    /* Privacy strip */
-    .privacy-strip {
-      display: flex; gap: 32px; flex-wrap: wrap;
-      padding: 28px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      margin-bottom: 72px;
+    /* ── Phone visual ───────────────────── */
+    .hero-visual { display: flex; justify-content: center; position: relative; }
+    .phone-wrap { position: relative; }
+    .phone-frame {
+      width: 260px; height: 520px;
+      background: var(--bg-card);
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(179,136,255,0.06);
+      overflow: hidden; position: relative;
     }
-    .privacy-item { display: flex; align-items: center; gap: 10px; }
-    .privacy-item-icon { color: var(--green); font-size: 13px; }
-    .privacy-item-text { font-size: 12px; color: var(--sub); }
-    .privacy-item-text strong { color: var(--text); font-weight: 400; }
+    .phone-notch { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 80px; height: 22px; background: #000; border-radius: 11px; z-index: 10; }
+    .phone-screen { padding: 52px 14px 14px; height: 100%; display: flex; flex-direction: column; gap: 8px; }
+    .phone-header { font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--softer); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .phone-date { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; margin-bottom: 8px; }
+    .phone-dream { background: var(--bg-alt); border-radius: 10px; padding: 10px 12px; }
+    .phone-dream-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .phone-dream-excerpt { font-size: 10px; color: var(--soft); line-height: 1.5; }
+    .phone-interp { background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 10px; padding: 10px 12px; margin-top: 2px; }
+    .phone-interp-label { font-family: var(--mono); font-size: 8px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .phone-interp-text { font-size: 10px; color: var(--soft); line-height: 1.5; }
+    .phone-symbol { background: var(--bg-alt); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+    .phone-symbol-name { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--text); }
+    .phone-symbol-count { font-family: var(--mono); font-size: 9px; color: var(--softer); }
+    .badge-float {
+      position: absolute; bottom: -14px; right: -20px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px 14px;
+      box-shadow: var(--shadow-lg); white-space: nowrap;
+    }
+    .badge-float-label { font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--softer); text-transform: uppercase; letter-spacing: 0.06em; }
+    .badge-float-val { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent); }
 
-    /* Sections */
-    .section { padding: 72px 0; border-top: 1px solid var(--border); position: relative; z-index: 1; }
-    .section-kicker {
-      font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--green); margin-bottom: 14px;
-    }
-    .section-heading {
-      font-family: var(--display); font-weight: 300;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      letter-spacing: -0.03em; color: var(--bright); margin-bottom: 18px; line-height: 1.1;
-    }
-    .section-sub {
-      max-width: 580px; font-size: 14px; color: var(--sub); line-height: 1.85; margin-bottom: 40px;
-    }
+    /* ── Sections ────────────────────────── */
+    section { padding: 80px 0; border-top: 1px solid var(--border); }
+    .section-tag { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+    h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.12; margin-bottom: 16px; }
+    h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); }
+    .section-sub { font-size: 16px; color: var(--soft); max-width: 560px; line-height: 1.65; margin-bottom: 48px; }
 
-    /* Feature grid */
-    .feature-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
-    }
+    /* ── Steps ───────────────────────────── */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .step-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 14px; position: relative; display: inline-block; }
+    .step-num::after { content: ''; position: absolute; top: 50%; left: calc(100% + 12px); width: 100px; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+    .step h3 { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .step p { font-size: 14px; color: var(--soft); line-height: 1.6; }
+
+    /* ── Feature grid ────────────────────── */
+    .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .feature-card {
-      padding: 24px; border: 1px solid var(--border); border-radius: 8px;
-      background: rgba(13,13,13,0.7); transition: border-color 0.2s, box-shadow 0.2s;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 28px;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s, transform .2s, border-color .2s;
     }
-    .feature-card:hover {
-      border-color: rgba(179,136,255,0.2); box-shadow: 0 8px 32px rgba(179,136,255,0.05);
-    }
-    .feature-card-icon { color: var(--green); font-size: 16px; margin-bottom: 12px; }
-    .feature-card-title { color: var(--bright); font-size: 12px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.04em; }
-    .feature-card-body { font-size: 12px; color: var(--sub); line-height: 1.7; }
+    .feature-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: var(--accent-border); }
+    .feature-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 13px; color: var(--soft); line-height: 1.6; }
 
-    /* Pro box */
-    .pro-box {
-      border: 1px solid rgba(179,136,255,0.15); border-radius: 8px;
-      padding: 36px; background: linear-gradient(135deg, rgba(179,136,255,0.04), transparent 60%);
-      margin-bottom: 32px;
+    /* ── Privacy callout ─────────────────── */
+    .privacy-callout {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 64px; box-shadow: var(--shadow);
     }
-    .pro-badge {
-      display: inline-block; background: var(--green); color: #000;
-      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
-      text-transform: uppercase; padding: 3px 8px; border-radius: 3px; margin-bottom: 16px;
-    }
-    .pro-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-    .pro-list li { font-size: 13px; color: var(--text); padding-left: 18px; position: relative; }
-    .pro-list li::before { content: '->'; position: absolute; left: 0; color: var(--green); font-size: 11px; }
+    .data-flow { display: flex; flex-direction: column; gap: 10px; }
+    .data-row { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; }
+    .data-badge { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+    .data-badge.on { background: rgba(34,197,94,0.14); color: #4ade80; }
+    .data-badge.off { background: rgba(239,68,68,0.12); color: #f87171; }
 
-    /* Footer */
-    footer {
-      position: relative; z-index: 1;
-      border-top: 1px solid var(--border); padding: 32px 0;
+    /* ── Free callout ────────────────────── */
+    .free-callout {
+      text-align: center; padding: 80px 40px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 32px; box-shadow: var(--shadow);
+      position: relative; overflow: hidden;
     }
-    footer .wrap {
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    .free-callout::before {
+      content: '';
+      position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(179,136,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
     }
-    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
-    .footer-links a { color: var(--dim); font-size: 11px; text-decoration: none; letter-spacing: 0.05em; }
-    .footer-links a:hover { color: var(--green); text-decoration: none; }
-    .footer-copy { color: var(--sub); font-size: 11px; opacity: 0.5; }
+    .free-callout > * { position: relative; z-index: 1; }
+    .free-callout h2 { margin-bottom: 16px; }
+    .free-callout .section-sub { margin: 0 auto 36px; }
+
+    /* ── Footer ──────────────────────────── */
+    footer { padding: 64px 0 40px; border-top: 1px solid var(--border); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+    .footer-tagline { font-size: 13px; color: var(--soft); max-width: 220px; line-height: 1.5; margin-top: 10px; }
+    .footer-links h5 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--softer); margin-bottom: 14px; }
+    .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { text-decoration: none; font-size: 14px; color: var(--soft); transition: color .15s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .copy { font-family: var(--mono); font-size: 11px; color: var(--softer); }
+
+    @media (max-width: 820px) {
+      .wrap { padding: 0 24px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { order: -1; }
+      .phone-frame { width: 220px; height: 440px; }
+      .steps { grid-template-columns: 1fr; gap: 40px; }
+      .step-num::after { display: none; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .privacy-callout { grid-template-columns: 1fr; padding: 40px 28px; }
+      .free-callout { padding: 48px 28px; border-radius: 20px; }
+      .footer-inner { flex-direction: column; gap: 40px; }
+    }
   </style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
-<div class="scan-lines"></div>
-
-<header class="site-header">
-  <div class="wrap">
-    <a class="site-header-logo" href="index.html">01<span>oneiro</span></a>
-    <nav class="site-header-nav">
-      <a href="support.html" class="nav-keep">Support</a>
+<nav>
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html">01<span>oneiro</span></a>
+    <div class="nav-links">
+      <a href="support.html">Support</a>
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
-      <a href="https://0x01.world" target="_blank" rel="noopener" class="nav-keep nav-cta">0x01.world ↗</a>
-      <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" title="Infinity Team" style="display:inline-flex; align-items:center; gap:6px; opacity:0.55; transition:opacity 0.2s; text-decoration:none;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.55'"><img src="infinity-logo.png" alt="Infinity Team" style="height:18px; width:18px; border-radius:4px; object-fit:cover; filter:brightness(0) invert(1);" /></a>
-    </nav>
+      <a href="https://0x01.world" target="_blank" rel="noopener">0x01.world</a>
+      <a href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener" class="nav-cta">Download</a>
+    </div>
   </div>
-</header>
+</nav>
 
-<section class="hero" style="position:relative; overflow:hidden; background: url('app-icon.png') no-repeat center center; background-size: cover;">
-  <!-- Dark vignette overlay so text is readable -->
-  <div style="position:absolute; inset:0; background: radial-gradient(circle at center, rgba(26,25,40,0.3) 0%, var(--bg) 100%); z-index:0;"></div>
-  <canvas id="oneiro-canvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity: 0.5;"></canvas>
-  <div class="wrap hero-inner" style="position:relative; z-index:1;">
-
-    <div class="hero-badge">
-      <span class="pulse-dot"></span>
-      <span>On-device AI · iPhone 15 Pro +</span>
-    </div>
-
-    <h1 class="hero-heading">
-      The private AI<br><span class="accent">dream interpreter</span>
-    </h1>
-
-    <p class="hero-tagline">
-      A personal dream journal and analyst that runs entirely on your iPhone.
-      Your most intimate nocturnal thoughts never leave your device. No servers, no data collection.
-    </p>
-
-    <div class="hero-ctas">
-      <a class="link-btn link-btn-primary" href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener">Download on App Store</a>
-      <a class="link-btn" href="support.html">FAQ</a>
-    </div>
-
-    <div style="margin-top:28px; display:flex; align-items:center; gap:10px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-      <span style="font-size:10.5px; color:rgba(255,255,255,0.8); letter-spacing:0.08em;">A product of</span>
-      <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:7px; text-decoration:none; opacity:0.85; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
-        <img src="infinity-logo.png" alt="Infinity Team" style="height:20px; width:20px; border-radius:4px; object-fit:cover; filter:brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.8));" />
-        <span style="font-size:10.5px; color:#ffffff; letter-spacing:0.08em; font-weight:600;">Infinity Team</span>
-      </a>
-    </div>
-
-    <div class="privacy-strip">
-      <div class="privacy-item">
-        <span class="privacy-item-icon">//</span>
-        <span class="privacy-item-text"><strong>Zero data collected</strong> — completely private</span>
-      </div>
-      <div class="privacy-item">
-        <span class="privacy-item-icon">//</span>
-        <span class="privacy-item-text"><strong>Works offline</strong> after initial model download</span>
-      </div>
-      <div class="privacy-item">
-        <span class="privacy-item-icon">//</span>
-        <span class="privacy-item-text"><strong>No account required</strong></span>
-      </div>
-      <div class="privacy-item">
-        <span class="privacy-item-icon">//</span>
-        <span class="privacy-item-text"><strong>Delete everything</strong> by deleting the app</span>
+<section class="hero" style="border-top:none; padding-top:100px;">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="hero-badge"><span class="pulse-dot"></span> On-device AI &middot; iPhone 15 Pro+</div>
+      <h1>Your dreams,<br><em>interpreted</em> privately</h1>
+      <p class="hero-sub">A personal dream journal and analyst that runs entirely on your iPhone. Your most intimate nocturnal thoughts never leave your device — not because we promise it, but because there are no servers.</p>
+      <div class="hero-actions">
+        <a href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener" class="btn btn-primary">Download on App Store</a>
+        <a href="support.html" class="btn btn-ghost">FAQ</a>
       </div>
     </div>
-
+    <div class="hero-visual">
+      <div class="phone-wrap">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header">Dream journal</div>
+            <div class="phone-date">Last night &middot; Aug 21</div>
+            <div class="phone-dream">
+              <div class="phone-dream-title">The house that kept expanding</div>
+              <div class="phone-dream-excerpt">Found a door I'd never opened. Behind it, more rooms — each one stranger than the last. I wasn't afraid.</div>
+            </div>
+            <div class="phone-interp">
+              <div class="phone-interp-label">Interpretation</div>
+              <div class="phone-interp-text">Expanding house imagery often signals self-discovery — new rooms as unexplored aspects of the self. The absence of fear is significant.</div>
+            </div>
+            <div class="phone-symbol">
+              <div class="phone-symbol-name">recurring: doors</div>
+              <div class="phone-symbol-count">7 dreams</div>
+            </div>
+          </div>
+        </div>
+        <div class="badge-float">
+          <div class="badge-float-label">Dreams stay</div>
+          <div class="badge-float-val">on device</div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="section">
+<section>
   <div class="wrap">
-    <p class="section-kicker">// how it works</p>
-    <h2 class="section-heading">Private by construction,<br>not by policy</h2>
-    <p class="section-sub">
-      01Oneiro runs powerful AI language models directly on your iPhone using Apple Silicon.
-      Every analysis of your dreams happens on your chip — no network call, no cloud API, no third party in the loop.
-    </p>
+    <div class="section-tag">How it works</div>
+    <h2>Record, interpret,<br><em>understand</em></h2>
+    <p class="section-sub">Dreams are most vivid in the minutes after waking. Oneiro captures them before they fade and gives you meaning before you leave the bed.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Record on waking</h3>
+        <p>Write or speak your dream the moment you wake. Oneiro captures every detail — symbols, emotions, settings — before they dissolve.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>AI interprets</h3>
+        <p>The on-device model applies Jungian, Freudian, or analytical frameworks — whichever fits — and surfaces what your subconscious might be processing.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Patterns emerge</h3>
+        <p>Over time, Oneiro tracks recurring symbols, characters, and themes across your dream history. What repeats is what matters.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
+<section>
+  <div class="wrap">
+    <div class="section-tag">Features</div>
+    <h2>Honest interpretations,<br><em>no censorship</em></h2>
+    <p class="section-sub">Dreams can be dark, confusing, or intimate. Oneiro doesn't filter. It interprets what's actually there.</p>
     <div class="feature-grid">
       <div class="feature-card">
-        <div class="feature-card-icon">◈</div>
-        <div class="feature-card-title">ON-DEVICE INFERENCE</div>
-        <div class="feature-card-body">The models run via Apple's MLX framework on the A17 Pro chip or newer. The model never touches the internet after download.</div>
+        <div class="feature-icon">&#x1F9E0;</div>
+        <h3>On-device AI model</h3>
+        <p>Apple's MLX framework runs the model on your A17 Pro chip or newer. Dream analysis happens on your silicon — no network call, no cloud API.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-card-icon">◈</div>
-        <div class="feature-card-title">DREAM MEMORY</div>
-        <div class="feature-card-body">01Oneiro builds a private catalog of your dreams over time, finding patterns and recurring symbols. Stored locally.</div>
+        <div class="feature-icon">&#x1F300;</div>
+        <h3>Dream memory</h3>
+        <p>Oneiro builds a private catalog of your dreams over time — recurring symbols, characters, locations — and identifies patterns across weeks and months.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-card-icon">◈</div>
-        <div class="feature-card-title">NO ACCOUNT, NO LOGIN</div>
-        <div class="feature-card-body">Nothing to sign up for. No email, no password, no profile synced anywhere. Open the app and start writing.</div>
+        <div class="feature-icon">&#x1F52D;</div>
+        <h3>Multiple frameworks</h3>
+        <p>Choose Jungian archetypes, Freudian analysis, or plain narrative interpretation. The AI applies the framework you prefer to every dream.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-card-icon">◈</div>
-        <div class="feature-card-title">HONEST INTERPRETATIONS</div>
-        <div class="feature-card-body">The agent provides analytical, Jungian, or Freudian interpretations without cloud-based content censorship.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-card-icon">◈</div>
-        <div class="feature-card-title">COMPLETE CONTROL</div>
-        <div class="feature-card-body">Clear your dream journal or delete the app — all instant, all permanent.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-card-icon">◈</div>
-        <div class="feature-card-title">OFFLINE BY DEFAULT</div>
-        <div class="feature-card-body">After the one-time model download (~1–2 GB), 01Oneiro works with no internet connection at all.</div>
+        <div class="feature-icon">&#x2708;</div>
+        <h3>Works offline anywhere</h3>
+        <p>After the one-time model download (~1–2 GB), Oneiro works with zero internet. Your most private moments don't need a connection.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section" style="border-bottom: 1px solid var(--border);">
-  <div class="wrap" style="text-align: center; padding-bottom: 40px;">
-    <h2 class="section-heading" style="margin-bottom: 24px;">No subscriptions.<br>No paywalls.</h2>
-    <p class="section-sub" style="margin: 0 auto 40px; max-width: 500px;">
-      01Oneiro is completely free. Every feature, from deep memory to custom interpretations, is included from day one.
-    </p>
-    <a class="link-btn link-btn-primary" href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener">Get 01Oneiro for free</a>
+<section>
+  <div class="wrap">
+    <div class="privacy-callout">
+      <div>
+        <div class="section-tag">Privacy</div>
+        <h2>What you dream<br>is <em>yours alone</em></h2>
+        <p class="section-sub">Dreams are the most private data that exists. We didn't build a policy to protect them — we built an architecture where sending them anywhere is technically impossible.</p>
+        <a href="privacy.html" class="btn btn-ghost" style="font-size:14px; padding:10px 20px;">Read the privacy policy</a>
+      </div>
+      <div class="data-flow">
+        <div class="data-row"><div class="data-badge on">On device</div> AI model &amp; inference</div>
+        <div class="data-row"><div class="data-badge on">On device</div> All dream entries</div>
+        <div class="data-row"><div class="data-badge on">On device</div> Symbol &amp; pattern memory</div>
+        <div class="data-row"><div class="data-badge on">On device</div> Interpretations &amp; history</div>
+        <div class="data-row"><div class="data-badge off">Never sent</div> Dream content to any server</div>
+        <div class="data-row"><div class="data-badge off">Never sent</div> Telemetry or analytics</div>
+        <div class="data-row"><div class="data-badge off">Never sent</div> Account or identity info</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="free-callout">
+      <div class="section-tag">Pricing</div>
+      <h2>Free. <em>No conditions.</em></h2>
+      <p class="section-sub" style="margin: 0 auto 36px;">Every feature — dream memory, recurring symbol tracking, multi-framework interpretation — is included from day one. No paywall, no trial.</p>
+      <a href="https://apps.apple.com/app/01oneiro" target="_blank" rel="noopener" class="btn btn-primary">Get 01Oneiro for free</a>
+    </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <div class="footer-links">
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms of Service</a>
-      <a href="support.html">Support</a>
-      <a href="mailto:contact@0x01.world">contact@0x01.world</a>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="logo" href="index.html">01<span>oneiro</span></a>
+        <p class="footer-tagline">Private AI dream interpreter for iPhone. No servers. No accounts.</p>
+      </div>
+      <div class="footer-links">
+        <h5>App</h5>
+        <ul>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="mailto:contact@0x01.world">contact@0x01.world</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h5>0x01 family</h5>
+        <ul>
+          <li><a href="https://0x01.world" target="_blank" rel="noopener">0x01.world</a></li>
+          <li><a href="https://www.infinityteam.io/" target="_blank" rel="noopener">Infinity Team</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-copy">© 2026 <a href="https://www.infinityteam.io/" target="_blank" rel="noopener" style="color:inherit; text-decoration:none;">Infinity Team</a>. All rights reserved.</div>
+    <div class="footer-bottom">
+      <span class="copy">&copy; 2026 Infinity Team. All rights reserved.</span>
+      <span class="copy">Your dreams stay on your phone.</span>
+    </div>
   </div>
 </footer>
 
-<script>
-;(function () {
-  const canvas = document.getElementById('oneiro-canvas')
-  const hero   = canvas.parentElement
-  const ctx    = canvas.getContext('2d')
-  const particles = []
-
-  function resize() {
-    canvas.width  = hero.offsetWidth
-    canvas.height = hero.offsetHeight
-  }
-  resize()
-  window.addEventListener('resize', resize)
-
-  function spawn() {
-    const cx = canvas.width * (0.3 + Math.random() * 0.4)
-    particles.push({
-      x:    cx,
-      y:    canvas.height * (0.6 + Math.random() * 0.3),
-      vx:   (Math.random() - 0.5) * 0.4,
-      vy:   -(0.4 + Math.random() * 0.6),
-      r:    1 + Math.random() * 2.5,
-      life: 0,
-      maxLife: 180 + Math.random() * 140,
-      hue: Math.random() < 0.7 ? 'purple' : 'white',
-    })
-  }
-
-  let frame = 0
-  function tick() {
-    requestAnimationFrame(tick)
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    frame++
-    if (frame % 5 === 0 && particles.length < 60) spawn()
-
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i]
-      p.life++
-      p.x += p.vx
-      p.y += p.vy
-      p.vx += (Math.random() - 0.5) * 0.04
-
-      const t    = p.life / p.maxLife
-      const alpha = t < 0.2
-        ? (t / 0.2) * 0.55
-        : t > 0.6
-          ? ((1 - t) / 0.4) * 0.55
-          : 0.55
-
-      if (p.life >= p.maxLife) { particles.splice(i, 1); continue }
-
-      ctx.beginPath()
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-      if (p.hue === 'purple') {
-        ctx.fillStyle = `rgba(179, 136, 255, ${alpha * 0.7})`
-      } else {
-        ctx.fillStyle = `rgba(200, 220, 255, ${alpha * 0.35})`
-      }
-      ctx.fill()
-
-      if (p.r > 2) {
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2)
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3)
-        if (p.hue === 'purple') {
-          grad.addColorStop(0, `rgba(179, 136, 255, ${alpha * 0.08})`)
-        } else {
-          grad.addColorStop(0, `rgba(200, 220, 255, ${alpha * 0.04})`)
-        }
-        grad.addColorStop(1, 'rgba(0,0,0,0)')
-        ctx.fillStyle = grad
-        ctx.fill()
-      }
-    }
-  }
-
-  for (let i = 0; i < 12; i++) {
-    spawn()
-    const p = particles[particles.length - 1]
-    p.life = Math.floor(Math.random() * p.maxLife * 0.5)
-    p.y -= p.vy * p.life
-    p.x += p.vx * p.life
-  }
-
-  tick()
-})()
-</script>
 </body>
 </html>
